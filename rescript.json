@@ -1,0 +1,23 @@
+{
+  "name": "aoc2023",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    }
+  ],
+  "warnings": {
+    "error": true,
+    "number": "-48"
+  },
+  "suffix": ".cjs",
+  "namespace": true,
+  "package-specs": {
+    "module": "commonjs",
+    "in-source": true
+  },
+  "bs-dependencies": [
+    "rescript-nodejs",
+    "@rescript/core"
+  ]
+}
