@@ -1,4 +1,3 @@
-open NodeJs
 open RescriptCore
 
 let makeResult = lines =>
@@ -19,10 +18,9 @@ let makeResult = lines =>
   ->Array.reduce(0, (acc, current) => acc + current)
   ->Js.log
 
-let input =
-  Fs.readFileSyncWith(Global.dirname ++ "/input/day1", {encoding: "utf8"})
-  ->Buffer.toString
-  ->String.split("\n")
+let input = "/input/day1"->Utils.makeInput
+
+// part 1
 input->makeResult
 
 // part 2
@@ -82,6 +80,7 @@ let _ =
               | None =>
                 // [_, _, _, _] case 없다
                 // Shift...
+
                 switch currentWord->String.split("") {
                 | [_, b, c] =>
                   switch (b ++ c)->matchedArray->Array.get(0) {
