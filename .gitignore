@@ -1,3 +1,5 @@
 *.cjs
 node_modules
 lib
+
+.idea
