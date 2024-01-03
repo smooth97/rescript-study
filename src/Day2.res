@@ -1,126 +1,64 @@
 open RescriptCore
 
-let input = "/input/day2"->Utils.makeInput
+let input = "/input/day1"->Utils.makeInput
 
-type game = {
-  id: int,
-  red: array<int>,
-  green: array<int>,
-  blue: array<int>,
-}
+let numberInput = input->Array.map(line =>
+  switch line->Int.fromString {
+  | Some(number) => number
+  | None => 0
+  }
+)
 
-type game2 = {
-  id: int,
-  canGame: array<bool>,
-}
-// Part 1
-let _ =
-  input
-  ->Array.map(game => {
-    switch game->String.split(":") {
-    | [into, detail] =>
-      into
-      ->String.split(" ")
-      ->Array.get(1)
-      ->Option.flatMap(gameId => gameId->Int.fromString)
-      ->Option.map(gameId => {
-        // Js.log(_gameId)
+// ref array test ------------
 
-        detail
-        ->String.trim
-        ->String.split(";")
-        ->Array.map(v => v->String.trim->String.split(",")->Array.map(String.trim))
-        ->Array.flat
-        ->Array.reduce(
-          {id: gameId, canGame: []},
-          (prev, current) => {
-            switch current->String.split(" ") {
-            | [count, color] =>
-              switch color {
-              | "red" => {
-                  id: gameId,
-                  canGame: prev.canGame->Array.concat([
-                    count->Int.fromString->Option.getOr(0) <= 12,
-                  ]),
-                }
-              | "green" => {
-                  id: gameId,
-                  canGame: prev.canGame->Array.concat([
-                    count->Int.fromString->Option.getOr(0) <= 13,
-                  ]),
-                }
-              | "blue" => {
-                  id: gameId,
-                  canGame: prev.canGame->Array.concat([
-                    count->Int.fromString->Option.getOr(0) <= 14,
-                  ]),
-                }
-              | _ => prev
-              }
-            | _ => prev
-            }
-          },
-        )
-      })
-    | _ => None
-    }
-  })
-  ->Array.keepSome
-  ->Array.filterMap(game => game.canGame->Array.every(v => v) ? Some(game) : None)
-  // ->Js.log
-  ->Array.reduce(0, (prev, current) => prev + current.id)
-  ->Js.log
+// let tempList = ref([])
+// let tempList: ref<array<int>> = ref([])
 
-// Part 2
-let _ =
-  input
-  ->Array.map(game => {
-    switch game->String.split(":") {
-    | [into, detail] =>
-      into
-      ->String.split(" ")
-      ->Array.get(1)
-      ->Option.flatMap(gameId => gameId->Int.fromString)
-      ->Option.map(gameId => {
-        // Js.log(_gameId)
+//let result1 = Array.reduce(numberInput, 0, (prev, current) => {
+//  tempList := tempList->Array.concat([prev + current])
+//  prev + current
+//})
 
-        detail
-        ->String.trim
-        ->String.split(";")
-        ->Array.map(v => v->String.trim->String.split(",")->Array.map(String.trim))
-        ->Array.flat
-        ->Array.reduce(
-          {id: gameId, red: [], green: [], blue: []},
-          (prev, current) => {
-            switch current->String.split(" ") {
-            | [count, color] =>
-              // Js.log(current)
-              switch color {
-              | "red" => {
-                  ...prev,
-                  red: prev.red->Array.concat([count->Int.fromString->Option.getOr(0)]),
-                }
-              | "green" => {
-                  ...prev,
-                  green: prev.green->Array.concat([count->Int.fromString->Option.getOr(0)]),
-                }
-              | "blue" => {
-                  ...prev,
-                  blue: prev.blue->Array.concat([count->Int.fromString->Option.getOr(0)]),
-                }
-              | _ => prev
-              }
-            | _ => prev
-            }
-          },
-        )
-      })
-    | _ => None
-    }
-  })
-  ->Array.keepSome
-  ->Array.map(game =>
-    game.red->Math.Int.maxMany * game.green->Math.Int.maxMany * game.blue->Math.Int.maxMany
-  )
-  ->Array.reduce(0, (prev, current) => prev + current)
-  ->Js.log
+
+// object test ------------
+let obj = Js.Obj.empty()
+
+let result1 = numberInput->Array.reduce(Map.make(), (prev, current) => {
+  // let key = string_of_int(prev + current)
+  // let copy = Js.Obj.assign(obj, {[key]: "test"})
+  switch prev->Map.get(current) {
+    | Some(_) => prev
+    | None => {
+      
+      prev->Map.set(current, current)
+      prev
+      }
+  }
+
+})
+
+result1->Map.values->Iterator.toArray->Array.reduce(0, (prev, current) => prev +current)->Js.log
+
+// let update = (obj, props) => {
+//   open Js.Obj
+//   ()->empty->assign(obj)->assign(props)
+// }
+
+
+// while test ------------
+
+//Array.forEach(numberInput, _item => {
+//  while Array.some(tempList, a => a === 10) {
+//    Array.concat(
+//      tempList,
+//      switch tempList[Array.length(tempList) - 1] {
+//      | Some(number) => number
+//      | None => 0
+//      },
+//    )
+//  }
+//})
+
+// let result = Array.concat(tempList, [1])
+
+// Js.Console.log2("resul1", result1)
