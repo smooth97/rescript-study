@@ -19,7 +19,6 @@ let numberInput = input->Array.map(line =>
 //  prev + current
 //})
 
-
 // object test ------------
 let obj = Js.Obj.empty()
 
@@ -27,23 +26,20 @@ let result1 = numberInput->Array.reduce(Map.make(), (prev, current) => {
   // let key = string_of_int(prev + current)
   // let copy = Js.Obj.assign(obj, {[key]: "test"})
   switch prev->Map.get(current) {
-    | Some(_) => prev
-    | None => {
-      
+  | Some(_) => prev
+  | None => {
       prev->Map.set(current, current)
       prev
-      }
+    }
   }
-
 })
 
-result1->Map.values->Iterator.toArray->Array.reduce(0, (prev, current) => prev +current)->Js.log
+result1->Map.values->Iterator.toArray->Array.reduce(0, (prev, current) => prev + current)->Js.log
 
 // let update = (obj, props) => {
 //   open Js.Obj
 //   ()->empty->assign(obj)->assign(props)
 // }
-
 
 // while test ------------
 

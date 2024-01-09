@@ -14,7 +14,7 @@
     "res:build": "rescript build",
     "res:watch": "rescript build -w",
     "res:clean": "rescript clean",
-    "watch": "concurrently -n rescript,node \"yarn res:watch\" \"node --watch ./src/Day2.cjs\""
-    
+    "watch": "concurrently -n rescript,node \"yarn res:watch\" \"node --watch ./src/2023/Day2.cjs\""
+
   }
 }
