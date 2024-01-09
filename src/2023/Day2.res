@@ -111,7 +111,6 @@ let partTwoResults =
         ->Array.reduce(
           {red: 0, blue: 0, green: 0},
           (prev, current) => {
-            ...prev,
             red: prev.red < current.red ? current.red : prev.red,
             blue: prev.blue < current.blue ? current.blue : prev.blue,
             green: prev.green < current.green ? current.green : prev.green,
