@@ -56,8 +56,9 @@ let partOneResults =
     | _ => 0
     }
   })
+  ->Array.reduce(0, (prev, current) => prev + current)
 
-Console.log(partOneResults->Array.reduce(0, (prev, current) => prev + current))
+Console.log2("part 1", partOneResults)
 
 // Part2 -----------------------------------
 
@@ -68,7 +69,7 @@ type game = {
   blue: int,
 }
 
-let _ =
+let partTwoResults =
   input
   ->Array.map(line => line->String.split(":"))
   ->Array.map(game => {
@@ -84,13 +85,13 @@ let _ =
       })
       ->Option.getOr(0)
 
-    let _ =
+    let gameCaseGroup =
       game
       ->Array.get(1)
       ->Option.map(item => item->String.split(";"))
-      // ->Option.flatMap(item => item)
-      ->Option.map(cubeCaseGroups =>
-        cubeCaseGroups->Array.map(
+      ->Option.map(cubeCaseGroups => {
+        cubeCaseGroups
+        ->Array.map(
           cubeGroup => {
             cubeGroup
             ->String.trim
@@ -120,47 +121,23 @@ let _ =
             )
           },
         )
-      )
-
-    // Console.log2("temp", temp)
-
-    //    switch Some(true) == isPossibleGame {
-    //    | true => gameId
-    //    | _ => 0
-    //    }
-    gameId
-  })
-
-let _ =
-  input
-  ->Array.map(line => line->String.split(":"))
-  ->Array.map(game => {
-    let gameId =
-      game
-      ->Array.get(0)
-      ->Option.map(gameId => {
-        gameId
-        ->String.split(" ")
-        ->Array.get(1)
-        ->Option.flatMap(item => item->Int.fromString)
-        ->Option.getOr(0)
+        ->Array.reduce(
+          {id: gameId, red: 0, blue: 0, green: 0},
+          (prev, current) => {
+            ...prev,
+            red: prev.red < current.red ? current.red : prev.red,
+            blue: prev.blue < current.blue ? current.blue : prev.blue,
+            green: prev.green < current.green ? current.green : prev.green,
+          },
+        )
       })
-      ->Option.getOr(0)
 
-    let temp =
-      game
-      ->Array.get(1)
-      ->Option.map(item => item->String.split(";"))
-      // ->Option.flatMap(item => item)
-
-      // ->Option.flatMap(item => item)
-      ->Option.map(cubeCaseGroups => cubeCaseGroups)
-
-    Console.log2("temp", temp)
-
-    //    switch Some(true) == isPossibleGame {
-    //    | true => gameId
-    //    | _ => 0
-    //    }
-    gameId
+    gameCaseGroup
   })
+  ->Array.map(item => {
+    let values = item->Option.getOr({id: 0, red: 0, blue: 0, green: 0})
+    values.red * values.green * values.blue
+  })
+  ->Array.reduce(0, (prev, current) => prev + current)
+
+Console.log2("part 2", partTwoResults)
