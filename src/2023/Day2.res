@@ -63,7 +63,6 @@ Console.log2("part 1", partOneResults)
 // Part2 -----------------------------------
 
 type game = {
-  id: int,
   red: int,
   green: int,
   blue: int,
@@ -73,18 +72,6 @@ let partTwoResults =
   input
   ->Array.map(line => line->String.split(":"))
   ->Array.map(game => {
-    let gameId =
-      game
-      ->Array.get(0)
-      ->Option.map(gameId => {
-        gameId
-        ->String.split(" ")
-        ->Array.get(1)
-        ->Option.flatMap(item => item->Int.fromString)
-        ->Option.getOr(0)
-      })
-      ->Option.getOr(0)
-
     let gameCaseGroup =
       game
       ->Array.get(1)
@@ -97,7 +84,7 @@ let partTwoResults =
             ->String.trim
             ->String.split(", ")
             ->Array.reduce(
-              {id: gameId, red: 0, blue: 0, green: 0},
+              {red: 0, blue: 0, green: 0},
               (prev, current) =>
                 switch current->String.split(" ") {
                 | [count, color] =>
@@ -116,13 +103,13 @@ let partTwoResults =
                     }
                   | _ => prev
                   }
-                | _ => {id: gameId, red: 0, blue: 0, green: 0}
+                | _ => {red: 0, blue: 0, green: 0}
                 },
             )
           },
         )
         ->Array.reduce(
-          {id: gameId, red: 0, blue: 0, green: 0},
+          {red: 0, blue: 0, green: 0},
           (prev, current) => {
             ...prev,
             red: prev.red < current.red ? current.red : prev.red,
@@ -135,7 +122,7 @@ let partTwoResults =
     gameCaseGroup
   })
   ->Array.map(item => {
-    let values = item->Option.getOr({id: 0, red: 0, blue: 0, green: 0})
+    let values = item->Option.getOr({red: 0, blue: 0, green: 0})
     values.red * values.green * values.blue
   })
   ->Array.reduce(0, (prev, current) => prev + current)
