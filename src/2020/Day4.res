@@ -1,6 +1,6 @@
 open RescriptCore
 
-let input = "/2020/input/day4"->Utils.makeInput
+let input = "/input/day4_sj"->Utils.makeInput
 
 let parsedList =
   input
@@ -22,6 +22,79 @@ let partOneResult =
 
 // Console.log(partOneResult)
 
+Js.log(Js.Re.test_(%re("/^#([0-9a-f]){6}$/"), "#aaaa10"))
+
+type height = Inch(int) | Cm(int)
+
+let heightFromString = (unit, value) =>
+  switch unit {
+  | "cm" =>
+    switch value >= 150 && value <= 193 {
+    | true => Some(Cm(value))
+    | _ => None
+    }
+  | "in" =>
+    switch value >= 59 && value <= 76 {
+    | true => Some(Inch(value))
+    | _ => None
+    }
+  | _ => None
+  }
+
+type eyeColor = Amb | Blu | Brn | Gry | Grn | Hzl | Oth
+
+let eyeColorFromString = value =>
+  switch value {
+  | "amb" => Some(Amb)
+  | "blu" => Some(Blu)
+  | "brn" => Some(Brn)
+  | "gry" => Some(Gry)
+  | "grn" => Some(Grn)
+  | "hzl" => Some(Hzl)
+  | "oth" => Some(Oth)
+  | _ => None
+  }
+
+type checkList =
+  Byr(int) | Iyr(int) | Eyr(int) | Hgt(height) | Hcl(string) | Ecl(eyeColor) | Pid(string)
+
+let checkListFromString = (label, value) =>
+  switch label {
+  | "byr" =>
+    let num = value->Int.fromString->Option.getOr(0)
+    value->String.length === 4 && num >= 1920 && num <= 2002 ? Some(Byr(num)) : None
+
+  | "iyr" =>
+    let num = value->Int.fromString->Option.getOr(0)
+    value->String.length === 4 && num >= 2010 && num <= 2020 ? Some(Iyr(num)) : None
+
+  | "eyr" =>
+    let num = value->Int.fromString->Option.getOr(0)
+    value->String.length === 4 && num >= 2020 && num <= 2030 ? Some(Eyr(num)) : None
+
+  | "hgt" => {
+      let unitType = value->String.sliceToEnd(~start=value->String.length - 2)
+      let value =
+        value
+        ->String.slice(~start=0, ~end=value->String.length - 2)
+        ->Int.fromString
+        ->Option.getOr(0)
+      switch heightFromString(unitType, value) {
+      | Some(v) => Some(Hgt(v))
+      | None => None
+      }
+    }
+  | "hcl" => Js.Re.test_(%re("/^#[0-9A-F]{6}$/i"), value) ? Some(Hcl("true")) : None
+  | "ecl" =>
+    switch eyeColorFromString(value) {
+    | Some(v) => Some(Ecl(v))
+    | None => None
+    }
+  | "pid" =>
+    value->String.length === 9 && Js.Re.test_(%re("/^[0-9]{9}/g"), value) ? Some(Pid(value)) : None
+  | _ => None
+  }
+
 // part2 ----------------------------------------
 
 let partTwoResult =
@@ -33,53 +106,15 @@ let partTwoResult =
       ->Array.map(checkItem => {
         switch checkItem->String.split(":") {
         | [label, value] =>
-          switch label {
-          | "byr" => {
-              //   byr(생년월일) – 4자리; 적어도 1920그리고 최대 2002.
-              let num = value->Int.fromString->Option.getOr(0)
-              value->String.length === 4 && num >= 1920 && num <= 2002
-            }
-          | "iyr" => {
-              //   iyr(발행 연도) - 4자리; 적어도 2010그리고 최대 2020.
-              let num = value->Int.fromString->Option.getOr(0)
-              value->String.length === 4 && num >= 2010 && num <= 2020
-            }
-          | "eyr" => {
-              //   eyr(만료 연도) - 4자리; 적어도 2020그리고 최대 2030.
-              let num = value->Int.fromString->Option.getOr(0)
-              value->String.length === 4 && num >= 2020 && num <= 2030
-            }
-          | "hgt" => {
-              //   hgt(높이) - 숫자 뒤에 cm 또는 in.
-              //   cm 숫자는 최소 150, 최대 이어야 합니다 193.
-              //   in 숫자는 최소 59, 최대 이어야 합니다 76.
-              let unitType = value->String.sliceToEnd(~start=value->String.length - 2)
-              let unitValue =
-                value
-                ->String.slice(~start=0, ~end=value->String.length - 2)
-                ->Int.fromString
-                ->Option.getOr(0)
-
-              switch unitType {
-              | "cm" => unitValue >= 150 && unitValue <= 193
-              | "in" => unitValue >= 59 && unitValue <= 76
-              | _ => false
-              }
-            }
-          //   hcl(머리 색깔) - a #뒤에 정확히 6개의 문자가 옵니다. 0- 9또는 a- f.
-          | "hcl" => Js.Re.test_(%re("/#([0-9a-f]){6}$/"), value)
-          //   ecl(눈 색깔) - 정확히 다음 중 하나: amb blu brn gry grn hzl oth.
-          | "ecl" => ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]->Array.includes(value)
-          | "pid" =>
-            // pid(여권 ID) - 앞에 0이 포함된 9자리 숫자입니다.
-            value->String.startsWith("0") && value->String.length === 9
-          | _ => false
-          }
-        | _ => false
+          let v = checkListFromString(label, value)
+          v
+        | _ => None
         }
       })
-    temp->Array.every(isPass => isPass)
+    temp->Array.keepSome
   })
-  ->Array.filter(isPass => isPass)
+  ->Array.filter(arr => arr->Array.length == 7)
+  ->Array.length
+  ->Js.log
 
-Console.log2("partTwoResult", partTwoResult->Array.length)
+// Console.log2("partTwoResult", partTwoResult->Array.length)
