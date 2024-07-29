@@ -47,16 +47,16 @@ let intersectAnswerCount = answers => {
 }
 
 let partOneResult =
-  Test.input
-  ->Test.splitAnswersByGroup
-  ->Test.uniqAnswers
+  input
+  ->splitAnswersByGroup
+  ->uniqAnswers
   ->Array.reduce(0, (acc, v) => acc + v)
   ->Console.log2("Part One Result: ")
 
 let partTwoResult =
-  Test.input
+  input
   ->Array.map(v => v->String.split("\n"))
-  ->Array.map(Test.splitAnswersByGroup)
-  ->Test.intersectAnswerCount
+  ->Array.map(splitAnswersByGroup)
+  ->intersectAnswerCount
   ->Array.reduce(0, (acc, v) => acc + v)
   ->Console.log2("Part Two Result: ")
