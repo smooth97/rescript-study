@@ -1,6 +1,6 @@
 open RescriptCore
 
-let input = "/input/day4_sj"->Utils.makeInput
+let input = "/input/day4"->Utils.makeInput
 
 let parsedList =
   input
@@ -118,3 +118,7 @@ let partTwoResult =
   ->Js.log
 
 // Console.log2("partTwoResult", partTwoResult->Array.length)
+
+// let input2 = "/input/day5"->Utils.makeInput
+
+Console.log2("hi", input)
